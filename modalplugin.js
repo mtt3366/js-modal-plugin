@@ -24,11 +24,13 @@
                 <i class="dpn-close"></i>
               </div>
               <div class="dpn-content">
-                ${template}
+                ${typeof template === 'object' && template.nodeType === 1
+                ? template.outerHTML
+                : template}
               </div>
               ${button.length > 0
                 ? `<div class="dpn-handle">
-                      ${button.map((item,index) => {
+                      ${button.map((item, index) => {
                     return `<button index="${index}">${item.text}</button>`
                 }).join('')}
                    </div>`
