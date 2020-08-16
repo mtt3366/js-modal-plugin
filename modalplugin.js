@@ -9,30 +9,30 @@
         constructor: ModalPlugin,
         //相当于大脑,可以控制先干什么在干什么(命令模式)
         init() {
+            //创建DOM结构
             this.creatDom()
 
             //基于事件委托,实现点击事件的处理
-            this.dpnDialog.addEventListener('click', (ev)=>{
+            this.dpnDialog.addEventListener('click', (ev) => {
                 let target = ev.target,
-                    {tagName,className}= target
-                console.log([target])
+                    {tagName, className} = target
                 //点击的关闭按钮
-                if(tagName==='I'&&className.includes('dpn-close')){
+                if (tagName === 'I' && className.includes('dpn-close')) {
                     this.close()
                     return
                 }
                 //点击的是底部按钮
-                if(tagName==='BUTTON' && target.parentNode.className.includes('dpn-handle')){
+                if (tagName === 'BUTTON' && target.parentNode.className.includes('dpn-handle')) {
                     let index = target.getAttribute('index')
                     //让传过来的函数执行,并且函数中的this还必须是当前实例
                     let func = this.options.buttons[index]['click']
-                    if(typeof func==='function'){
+                    if (typeof func === 'function') {
                         func.call(this)
                     }
                     return
                 }
-
             })
+            this.fire('init')//通知init方法执行成功
         },
         //创建DOM结构
         creatDom() {
@@ -75,11 +75,28 @@
         open() {
             this.dpnDialog.style.display = 'block'
             this.dpnModel.style.display = 'block'
+            this.fire('open')//通知open方法执行成功
         },
         //控制隐藏
         close() {
             this.dpnDialog.style.display = 'none'
             this.dpnModel.style.display = 'none'
+            this.fire('close')//通知close方法执行成功
+        },
+        //on向事件池中订阅方法
+        on(type, func) {
+            let arr = this.pond[type]
+            if(arr.includes(func)) return
+            arr.push(func)
+        },
+        //通知事件池中的方法执行
+        fire(type) {
+            let arr = this.pond[type]
+            arr.forEach(item => {
+                if(typeof item ==='function'){
+                    item.call(this)
+                }
+            })
         }
 
     }
@@ -95,6 +112,11 @@
         }, options)
         //把信息挂载到实例上: 在原型的各个方法中,只要this是实例,都可以调用到这些信息
         this.options = options;
+        this.pond = {
+            init: [],
+            close: [],
+            open: []
+        }
         this.init()
     }
 
@@ -132,6 +154,15 @@ const modal1 = ModalPlugin({
         },
 
     }]
+})
+modal1.on('open',()=>{
+    console.log('我被打开了1')
+})
+modal1.on('open',()=>{
+    console.log('我被打开了2')
+})
+modal1.on('close',()=>{
+    console.log('我被关闭了')
 })
 modal1.open()
 
