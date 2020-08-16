@@ -10,6 +10,29 @@
         //相当于大脑,可以控制先干什么在干什么(命令模式)
         init() {
             this.creatDom()
+
+            //基于事件委托,实现点击事件的处理
+            this.dpnDialog.addEventListener('click', (ev)=>{
+                let target = ev.target,
+                    {tagName,className}= target
+                console.log([target])
+                //点击的关闭按钮
+                if(tagName==='I'&&className.includes('dpn-close')){
+                    this.close()
+                    return
+                }
+                //点击的是底部按钮
+                if(tagName==='BUTTON' && target.parentNode.className.includes('dpn-handle')){
+                    let index = target.getAttribute('index')
+                    //让传过来的函数执行,并且函数中的this还必须是当前实例
+                    let func = this.options.buttons[index]['click']
+                    if(typeof func==='function'){
+                        func.call(this)
+                    }
+                    return
+                }
+
+            })
         },
         //创建DOM结构
         creatDom() {
@@ -98,12 +121,14 @@ const modal1 = ModalPlugin({
         text: '确定',
         click() {
             //this:当前实例
+            this.close()
         }
     }, {
         //按钮文字
         text: '取消',
         click() {
             //this:当前实例
+            this.close()
         },
 
     }]
