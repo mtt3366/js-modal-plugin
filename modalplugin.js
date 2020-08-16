@@ -15,13 +15,11 @@
             title:'系统提示',
             template:null,
             frag:true,
-            buttons:[{
-                text:'确定',
-                click(){
-                }
-            }]
+            buttons:[{}]
         },options)
-
+        //把信息挂载到实例上: 在原型的各个方法中,只要this是实例,都可以调用到这些信息
+        this.options = options;
+        this.init()
     }
     init.prototype = ModalPlugin.prototype;
     // 浏览器直接导入,这样的方法是暴露到全局的
