@@ -13,7 +13,7 @@
         },
         //创建DOM结构
         creatDom() {
-            let {title, template, button} = this.options
+            let {title, template, buttons} = this.options
             //如果用creatElement插入DOM,每一次动态插入,都会导致DOM的回流,非常消耗性能,所以最外面使用createElement创建,内部使用字符串的方式拼写进去,创建好了之后放到最外层的容器当中,只引起一次回流
             let frag = document.createDocumentFragment()
             let dpnDialog = document.createElement('div')
@@ -21,16 +21,16 @@
             dpnDialog.innerHTML = `
               <div class="dpn-title">
                 ${title}
-                <i class="dpn-close"></i>
+                <i class="dpn-close">X</i>
               </div>
               <div class="dpn-content">
-                ${typeof template === 'object' && template.nodeType === 1
+                ${template && typeof template === 'object' && template.nodeType === 1
                 ? template.outerHTML
                 : template}
               </div>
-              ${button.length > 0
+              ${buttons.length > 0
                 ? `<div class="dpn-handle">
-                      ${button.map((item, index) => {
+                      ${buttons.map((item, index) => {
                     return `<button index="${index}">${item.text}</button>`
                 }).join('')}
                    </div>`
@@ -48,6 +48,16 @@
             this.dpnDialog = dpnDialog//挂载到实例上,便于其他方法的控制隐藏,并且是私有的实例,
             this.dpnModel = dpnModel
         },
+        //控制他显示
+        open() {
+            this.dpnDialog.style.display = 'block'
+            this.dpnModel.style.display = 'block'
+        },
+        //控制隐藏
+        close() {
+            this.dpnDialog.style.display = 'none'
+            this.dpnModel.style.display = 'none'
+        }
 
     }
 
@@ -75,7 +85,7 @@
 })()
 
 //使用:
-ModalPlugin({
+const modal1 = ModalPlugin({
     //提示的标题信息
     title: '系统提示',
     //内容模板 字符串 /模板字符串/DOM元素对象
@@ -89,6 +99,14 @@ ModalPlugin({
         click() {
             //this:当前实例
         }
+    }, {
+        //按钮文字
+        text: '取消',
+        click() {
+            //this:当前实例
+        },
+
     }]
 })
+modal1.open()
 
