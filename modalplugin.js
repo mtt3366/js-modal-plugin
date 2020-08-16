@@ -5,7 +5,40 @@
     }
 //想使用创建对象的方式创建实例new ModalPlugin()或当做普通函数执行也能创建实例ModalPlugin(),需要这样做
     ModalPlugin.prototype = {
-        constructor: ModalPlugin
+        constructor: ModalPlugin,
+        //相当于大脑,可以控制先干什么在干什么(命令模式)
+        init() {
+            this.creatDom()
+        },
+        //创建DOM结构
+        creatDom(){
+            //如果用creatElement插入DOM,每一次动态插入,都会导致DOM的回流,非常消耗性能,所以最外面使用createElement创建,内部使用字符串的方式拼写进去,创建好了之后放到最外层的容器当中,只引起一次回流
+            let frag = document.createDocumentFragment()
+            let dpnDialog = document.createElement('div')
+            dpnDialog.className = 'dpn-dialog'
+            dpnDialog.innerHTML = `
+              <div class="dpn-title">
+                系统温馨提示
+                <i class="dpn-close"></i>
+              </div>
+              <div class="dpn-content">
+            
+              </div>
+              <div class="dpn-handle">
+                <button>确定</button>
+                <button>取消</button>
+              </div>`
+            frag.appendChild(dpnDialog)
+
+            let dpnModel = document.createElement('div')
+            dpnModel.className = 'dpn-model'
+            frag.appendChild(dpnModel)
+            document.body.appendChild(frag)//使用frag只需要往页面中插入一次,减少回流次数
+            frag = null
+
+            this.dpnDialog = dpnDialog//挂载到实例上,便于其他方法的控制隐藏,并且是私有的实例,
+            this.dpnModel = dpnModel
+        }
     }
 
     function init(options) {
