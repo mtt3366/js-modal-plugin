@@ -15,7 +15,9 @@
  *    + 拖拽结束 ondragend
  */
 import utils from './lib/utils';
+import Sub from './lib/sub';
 
+/* 插件核心 */
 function ModalPlugin(config) {
     let self = this;
     self.config = config;
@@ -29,7 +31,12 @@ function ModalPlugin(config) {
     self.startT = 0;
     self._MOVE = null;
     self._UP = null;
-
+    //如果开启拖拽，我们需要创建三个事件池
+    if (self.config.drag) {
+        self.ondragstart = new Sub;
+        self.ondraging = new Sub;
+        self.ondragend = new Sub;
+    }
     self.init();
 }
 ModalPlugin.prototype = {
@@ -57,7 +64,6 @@ ModalPlugin.prototype = {
                     if (item && utils.isFunction(item.click)) {
                         item.click.call(self, self);
                     }
-                    return;
                 }
             });
         }
@@ -106,6 +112,14 @@ ModalPlugin.prototype = {
         self.$drag_content.offsetHeight; //刷新渲染队列(获取一下样式,这样上面的添加到页面和改变元素样式就分两次执行了)
         self.$drag_modal ? self.$drag_modal.style.opacity = 1 : null;
         self.$drag_content.style.opacity = 1;
+
+        // 改变盒子居中的方式
+        self.$drag_content.style.left = `${(document.documentElement.clientWidth-self.$drag_content.offsetWidth)/2}px`;
+        self.$drag_content.style.top = `${(document.documentElement.clientHeight-self.$drag_content.offsetHeight)/2}px`;
+        self.$drag_content.style.transform = 'translate(0,0)';
+
+        // 触发打开的周期函数
+        self.config.onopen.call(self, self);
     },
     // 关闭Modal（页面中移除掉）
     close() {
@@ -124,6 +138,8 @@ ModalPlugin.prototype = {
             self.$drag_content.ontransitionend = () => {
                 body.removeChild(self.$drag_content);
                 self.$drag_content = null;
+                // 触发关闭的周期函数
+                self.config.onclose.call(self, self);
             };
         }
     },
@@ -138,6 +154,8 @@ ModalPlugin.prototype = {
         self._UP = self.up.bind(self);
         document.addEventListener('mousemove', self._MOVE);
         document.addEventListener('mouseup', self._UP);
+        // 通知事件池中的方法执行
+        self.ondragstart.fire(self);
     },
     move(ev) {
         let self = this,
@@ -153,11 +171,15 @@ ModalPlugin.prototype = {
         curT = curT < minT ? minT : (curT > maxT ? maxT : curT);
         self.$drag_content.style.left = curL + 'px';
         self.$drag_content.style.top = curT + 'px';
+        // 通知事件池中的方法执行
+        self.ondraging.fire(self);
     },
     up() {
         let self = this;
         document.removeEventListener('mousemove', self._MOVE);
         document.removeEventListener('mouseup', self._UP);
+        // 通知事件池中的方法执行
+        self.ondragend.fire(self);
     }
 };
 
@@ -212,11 +234,11 @@ const proxyModal = function proxyModal(options) {
         if (typeof optValue === "undefined") {
             if (required) throw new TypeError(`${key} must be required!`);
             config[key] = defaultValue;
-            return;
+        }else{
+            // options有传递key这一项：验证值的格式 && 取传递进来的值「扩展：对象深度合并」
+            if (utils.toType(optValue) !== type) throw new TypeError(`${key} must be an ${type}!`);
+            config[key] = utils.merge(defaultValue, optValue);
         }
-        // options有传递key这一项：验证值的格式 && 取传递进来的值「扩展：对象深度合并」
-        if (utils.toType(optValue) !== type) throw new TypeError(`${key} must be an ${type}!`);
-        config[key] = utils.merge(defaultValue, optValue);
     }
     return new ModalPlugin(config);
 };
