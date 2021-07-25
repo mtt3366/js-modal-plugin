@@ -21,6 +21,15 @@ function ModalPlugin(config) {
     self.config = config;
     self.$drag_modal = null;
     self.$drag_content = null;
+
+
+    self.startX = 0;
+    self.startY = 0;
+    self.startL = 0;
+    self.startT = 0;
+    self._MOVE = null;
+    self._UP = null;
+
     self.init();
 }
 ModalPlugin.prototype = {
@@ -51,6 +60,12 @@ ModalPlugin.prototype = {
                     return;
                 }
             });
+        }
+        if (self.config.drag) {
+            // 开启多拽
+            let $drag_head = self.$drag_content.querySelector('.drag_head');
+            $drag_head.style.cursor = 'move';
+            $drag_head.addEventListener('mousedown', self.down.bind(self));
         }
     },
     // 动态创建Modal的DOM结构
@@ -111,6 +126,38 @@ ModalPlugin.prototype = {
                 self.$drag_content = null;
             };
         }
+    },
+    // 拖拽系列方法
+    down(ev) {
+        let self = this;
+        self.startX = ev.pageX;
+        self.startY = ev.pageY;
+        self.startL = self.$drag_content.offsetLeft;
+        self.startT = self.$drag_content.offsetTop;
+        self._MOVE = self.move.bind(self);
+        self._UP = self.up.bind(self);
+        document.addEventListener('mousemove', self._MOVE);
+        document.addEventListener('mouseup', self._UP);
+    },
+    move(ev) {
+        let self = this,
+            curL = ev.pageX - self.startX + self.startL,
+            curT = ev.pageY - self.startY + self.startT;
+        // 边界判断
+        let HTML = document.documentElement,
+            minL = 0,
+            minT = 0,
+            maxL = HTML.clientWidth - self.$drag_content.offsetWidth,
+            maxT = HTML.clientHeight - self.$drag_content.offsetHeight;
+        curL = curL < minL ? minL : (curL > maxL ? maxL : curL);
+        curT = curT < minT ? minT : (curT > maxT ? maxT : curT);
+        self.$drag_content.style.left = curL + 'px';
+        self.$drag_content.style.top = curT + 'px';
+    },
+    up() {
+        let self = this;
+        document.removeEventListener('mousemove', self._MOVE);
+        document.removeEventListener('mouseup', self._UP);
     }
 };
 
