@@ -47,7 +47,7 @@ M({
 ```
 ```js
 let m2 = M({
-    template: `我们今天实现了插件组件封装`,
+    template: `我是模态框插件`,
     buttons: [{
         text: '确定',
         click(self) {
