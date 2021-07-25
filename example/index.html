@@ -33,91 +33,122 @@
 </head>
 
 <body>
-    <!--  
-    <div class="drag_modal"></div>
-    <div class="drag_content">
-        <div class="drag_head">
-            系统温馨提示
-            <a href="javascript:;" class="drag_close"></a>
-        </div>
-        <div class="drag_main">
-            哈哈哈
-        </div>
-        <div class="drag_foot">
-            <a href="javascript:;" class="drag_button">取消</a>
-            <a href="javascript:;" class="drag_button">确定</a>
-        </div>
+<!--
+<div class="drag_modal"></div>
+<div class="drag_content">
+    <div class="drag_head">
+        系统温馨提示
+        <a href="javascript:;" class="drag_close"></a>
     </div>
-    -->
+    <div class="drag_main">
+        哈哈哈
+    </div>
+    <div class="drag_foot">
+        <a href="javascript:;" class="drag_button">取消</a>
+        <a href="javascript:;" class="drag_button">确定</a>
+    </div>
+</div>
+-->
 
-    <button id="btn">点我哈</button>
+<button id="btn1">点我1</button>
+<button id="btn2">点我2</button>
 
-    <!-- IMPORT JS -->
-    <script src="../dist/modalplugin.min.js"></script>
-    <script>
-        btn.onclick = function () {
-            /* let m1 = M({
-                title: '登录管理系统',
-                template: `<div class="box">
-                    <div class="from">
-                        <span>用户名：</span>
-                        <input type="text" id="username">
-                    </div>
-                    <div class="from">
-                        <span>密码：</span>
-                        <input type="password" id="userpass">
-                    </div>
-                </div>`,
-                buttons: [{
-                    text: 'cancle',
-                    click(self) {
-                        self.close();
-                    }
-                }, {
-                    text: 'confirm',
-                    click(self) {
-                        let username = document.querySelector('#username'),
-                            userpass = document.querySelector('#userpass');
-                        console.log(username.value, userpass.value);
-                        self.close();
-                    }
-                }],
-            }); */
+<!-- IMPORT JS -->
+<script src="../dist/modalplugin.min.js"></script>
+<script>
+    btn1.onclick = function () {
+        let m1 = M({
+            title: '登录管理系统',
+            template: `<div class="box">
+                <div class="from">
+                    <span>用户名：</span>
+                    <input type="text" id="username">
+                </div>
+                <div class="from">
+                    <span>密码：</span>
+                    <input type="password" id="userpass">
+                </div>
+            </div>`,
+            buttons: [{
+                text: 'cancle',
+                click(self) {
+                    self.close();
+                }
+            }, {
+                text: 'confirm',
+                click(self) {
+                    let username = document.querySelector('#username'),
+                        userpass = document.querySelector('#userpass');
+                    console.log(username.value, userpass.value);
+                    self.close();
+                }
+            }],
+        });
+
+    }
+    btn2.onclick = function () {
+        /* let m1 = M({
+            title: '登录管理系统',
+            template: `<div class="box">
+                <div class="from">
+                    <span>用户名：</span>
+                    <input type="text" id="username">
+                </div>
+                <div class="from">
+                    <span>密码：</span>
+                    <input type="password" id="userpass">
+                </div>
+            </div>`,
+            buttons: [{
+                text: 'cancle',
+                click(self) {
+                    self.close();
+                }
+            }, {
+                text: 'confirm',
+                click(self) {
+                    let username = document.querySelector('#username'),
+                        userpass = document.querySelector('#userpass');
+                    console.log(username.value, userpass.value);
+                    self.close();
+                }
+            }],
+        }); */
 
 
-            let m2 = M({
-                template: `我们今天实现了插件组件封装`,
-                buttons: [{
-                    text: '确定',
-                    click(self) {
-                        self.close();
-                    }
-                }],
-                // 周期函数「回调函数：用户需要处理的事情都要写在两个回调函数中」
-                onopen: self => {
-                    console.log('已经打开', self);
-                },
-                onclose() {
-                    console.log('已经关闭', this);
-                },
-                drag: true
-            });
-            console.log('m2',m2)
-            //周期函数「发布订阅：可以灵活的给某一个事件订阅自己想要执行的方法，可以是多个，也可以在其他的位置」
-            m2.ondragstart.on(self => {
-                console.log('拖拽开始1', self);
-            });
-            m2.ondragstart.on(self => {
-                console.log('拖拽开始2', self);
-            });
-            m2.ondraging.on(self => {
-                console.log('拖拽中...');
-            });
-            m2.ondragend.on(self => {
-                console.log('拖拽结束');
-            });
-        };
-    </script>
+        let m2 = M({
+            template: `我们今天实现了插件组件封装`,
+            buttons: [{
+                text: '确定',
+                click(self) {
+                    self.close();
+                }
+            }],
+            // 周期函数「回调函数：用户需要处理的事情都要写在两个回调函数中」
+            onopen: self => {
+                console.log('已经打开', self);
+            },
+            onclose() {
+                console.log('已经关闭', this);
+            },
+            drag: true
+        });
+        console.log('m2', m2)
+        //周期函数「发布订阅：可以灵活的给某一个事件订阅自己想要执行的方法，可以是多个，也可以在其他的位置」
+        m2.ondragstart.on(self => {
+            console.log('拖拽开始1', self);
+        });
+        m2.ondragstart.on(self => {
+            console.log('拖拽开始2', self);
+        });
+        m2.ondraging.on(self => {
+            console.log('拖拽中...');
+        });
+        m2.ondragend.on(self => {
+            console.log('拖拽结束');
+        });
+    };
+</script>
 </body>
 
 </html>
